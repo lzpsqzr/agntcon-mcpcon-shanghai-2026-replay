@@ -35,10 +35,13 @@ python3 -m http.server 8000
 
 ## 数据结构
 
-- `data.js`：场次注册表（slug → 下拉框项）。加新场次 = 渲染 slide 图 + 新建 `<slug>-data.js` + 复制 PDF 到 `pdfs/` + 注册一行。
+- `index.html`：首页——现场照片、参会体会（"驯服时刻"）、四个词观察、13 场回放入口。
+- `player.html`：回放器（slide × 字幕对照）。
+- `data.js`：场次注册表（slug → 下拉框/首页卡片）。加新场次 = 渲染 slide 图 + 新建 `<slug>-data.js` + 复制 PDF 到 `pdfs/` + 注册一行。
 - `<slug>-data.js`：每场一个 `window.talk`，`cues` 数组每条含 `start`/`end`（字幕时间戳）、`slide`（页码）、`label`（中文概括）、`transcript`（原声清理版）、`transcript_zh`（中文译文）、`note`（编辑注释：跳页说明、Wordly 转写勘误等）。
 - `assets/<slug>/slide-NN.jpg`：`pdftoppm -jpeg -scale-to 1280` 预渲染。
 - `pdfs/<slug>.pdf`：该场官方 deck（发布到 GitHub Pages 用，仓库自包含）。
+- `field-photos/`：现场照片（首页照片墙）。
 
 ## 已知边界
 

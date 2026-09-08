@@ -3,142 +3,196 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Slides × Transcript</title>
+    <title>AgentCon × MCPCon Shanghai 2026 · 现场回放</title>
     <style>
       :root { --ink:#1a1d1f; --muted:#6f767d; --line:#e6e8e7; --paper:#ffffff; --accent:#e85d3f; --soft:#fdf1ec; --stage:#16181a; --stage-text:#9aa1a7; }
       * { box-sizing:border-box; }
-      html, body { height:100%; }
-      body { margin:0; color:var(--ink); background:var(--paper); font:15px/1.55 ui-sans-serif, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; display:flex; flex-direction:column; }
+      body { margin:0; color:var(--ink); background:var(--paper); font:16px/1.7 ui-sans-serif, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+      .wrap { max-width:1020px; margin:0 auto; padding:0 22px; }
 
-      /* 页头：只有标题、来源、场次选择器 */
-      header { padding:13px 20px; border-bottom:1px solid var(--line); display:flex; gap:16px; justify-content:space-between; align-items:center; flex-shrink:0; }
-      .title-block { min-width:0; }
-      h1 { font-size:17px; line-height:1.3; margin:0 0 2px; font-weight:650; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      .meta { color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-      select { font:inherit; font-size:13px; color:var(--ink); padding:7px 28px 7px 10px; max-width:320px; border:1px solid var(--line); border-radius:8px; background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%236f767d' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center; appearance:none; cursor:pointer; flex-shrink:0; }
-      select:hover, select:focus { border-color:#c9cdd0; outline:none; }
+      /* 深色 hero，与回放器同一块"放映区" */
+      .hero { background:var(--stage); color:#e8ebec; padding:72px 0 60px; }
+      .hero .wrap { position:relative; }
+      .kicker { font-size:13px; letter-spacing:.14em; color:var(--stage-text); margin:0 0 14px; }
+      .hero h1 { font-size:clamp(26px, 4.4vw, 40px); line-height:1.3; margin:0 0 14px; font-weight:700; letter-spacing:-.01em; }
+      .hero .sub { color:#b7bdc2; max-width:640px; margin:0 0 28px; font-size:15px; }
+      .cta { display:inline-block; background:var(--accent); color:#fff; text-decoration:none; font-size:15px; padding:11px 22px; border-radius:10px; }
+      .cta:hover { background:#d94f30; }
+      .cta-note { color:var(--stage-text); font-size:12.5px; margin-left:14px; }
+      .quote { margin:44px 0 0; padding:4px 0 4px 20px; border-left:3px solid var(--accent); max-width:720px; }
+      .quote p { margin:0 0 12px; color:#d6dadd; font-size:15.5px; }
+      .quote p:last-child { margin-bottom:0; }
+      .quote .sig { color:var(--stage-text); font-size:13px; margin-top:14px; }
 
-      main { flex:1; min-height:0; display:grid; grid-template-columns:62fr 38fr; }
+      /* 通用章节 */
+      section.body { padding:52px 0 8px; }
+      h2 { font-size:22px; margin:0 0 6px; letter-spacing:-.01em; }
+      .lede { color:var(--muted); margin:0 0 26px; font-size:15px; max-width:720px; }
 
-      /* 左侧：放映区，slide 是主角 */
-      .player { position:relative; background:var(--stage); display:flex; padding:24px 24px 34px; min-height:0; }
-      #slide-image { display:block; margin:auto; max-width:100%; width:auto; max-height:100%; height:auto; box-shadow:0 10px 34px #0009; transition:opacity .14s ease; }
-      .player-bar { position:absolute; left:26px; right:26px; bottom:9px; display:flex; justify-content:space-between; gap:12px; font-size:11px; color:var(--stage-text); }
-      .player-bar a { color:var(--stage-text); text-decoration:none; }
-      .player-bar a:hover { color:#e6e9eb; text-decoration:underline; }
+      /* 四个词 */
+      .grid4 { display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; }
+      .word { border:1px solid var(--line); border-radius:12px; padding:18px 20px 16px; }
+      .word h3 { margin:0 0 2px; font-size:16.5px; }
+      .word h3 .no { color:var(--accent); font-family:ui-monospace,Menlo,monospace; font-size:13px; margin-right:8px; }
+      .word .take { color:var(--muted); font-size:13px; margin:0 0 10px; }
+      .word p { margin:0; font-size:14px; color:#33393d; }
+      .word b { color:var(--ink); }
 
-      /* 右侧：字幕与检索面板 */
-      .panel { border-left:1px solid var(--line); display:flex; flex-direction:column; min-height:0; }
-      .tools { padding:12px 14px 6px; display:grid; grid-template-columns:1fr auto auto auto; gap:6px; align-items:center; }
-      input { width:100%; padding:8px 11px; border:1px solid var(--line); border-radius:8px; font:inherit; font-size:14px; outline:none; }
-      input:focus { border-color:#c9cdd0; }
-      .icon-btn { font:inherit; font-size:12px; line-height:1; width:34px; height:35px; background:#fff; color:var(--muted); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
-      .icon-btn:hover { color:var(--accent); border-color:#f0c4b6; background:var(--soft); }
-      .hintline { padding:2px 16px 10px; font-size:11px; color:var(--muted); border-bottom:1px solid var(--line); }
-      #results { flex:1; overflow:auto; padding:8px 10px 18px; }
-      .cue { cursor:pointer; border-radius:8px; padding:10px 12px; margin:1px 0; border-left:3px solid transparent; }
-      .cue:hover { background:#f5f6f5; }
-      .cue.active { background:var(--soft); border-left-color:var(--accent); }
-      .cue-head { display:flex; justify-content:space-between; gap:10px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:11px; }
-      .time { color:#8a9298; }
-      .cue.active .time { color:var(--accent); }
-      .slide-no { color:var(--muted); }
-      h2 { font-size:14px; margin:5px 0 6px; font-weight:600; }
-      .quote { color:#33393d; margin:0; font-size:14px; }
-      .note { font-size:12px; color:var(--muted); margin:7px 0 0; }
+      /* 照片墙 */
+      .gallery { columns:3; column-gap:14px; }
+      .gallery figure { margin:0 0 14px; break-inside:avoid; }
+      .gallery img { width:100%; height:auto; display:block; border-radius:10px; }
+      .gallery figcaption { font-size:12px; color:var(--muted); padding:6px 2px 0; }
 
-      @media (max-width:900px) {
-        body { height:auto; } main { grid-template-columns:1fr; }
-        .player { height:56vh; }
-        .panel { border-left:none; border-top:1px solid var(--line); }
-        h1, .meta { white-space:normal; }
-        select { max-width:180px; }
+      /* 行业信号 */
+      .signals { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+      .signal { background:#fafbfa; border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+      .signal h3 { margin:0 0 8px; font-size:15px; }
+      .signal p { margin:0; font-size:13.5px; color:#33393d; }
+
+      /* 回放入口 */
+      .hall { margin-bottom:26px; }
+      .hall h3 { font-size:14px; color:var(--muted); font-weight:600; margin:0 0 10px; letter-spacing:.04em; }
+      .talks { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+      .talk { display:block; text-decoration:none; color:var(--ink); border:1px solid var(--line); border-radius:12px; padding:14px 16px; transition:border-color .12s; }
+      .talk:hover { border-color:#f0c4b6; background:var(--soft); }
+      .talk .t { font-size:15px; font-weight:600; }
+      .talk .s { font-size:12.5px; color:var(--muted); margin-top:3px; }
+      .talk .go { color:var(--accent); font-size:12.5px; }
+
+      /* 方法 & 页脚 */
+      .how { border-left:3px solid var(--line); padding-left:20px; color:#33393d; font-size:14.5px; max-width:720px; }
+      footer { margin:56px 0 0; border-top:1px solid var(--line); padding:22px 0 40px; color:var(--muted); font-size:12.5px; }
+      footer a { color:var(--muted); } footer a:hover { color:var(--accent); }
+
+      @media (max-width:760px) {
+        .grid4, .signals, .talks { grid-template-columns:1fr; }
+        .gallery { columns:2; column-gap:10px; }
+        .cta-note { display:block; margin:10px 0 0; }
+        .hero { padding:52px 0 44px; }
       }
     </style>
   </head>
   <body>
-    <header>
-      <div class="title-block"><h1 id="title"></h1><div class="meta" id="meta"></div></div>
-      <select id="talk-select" title="切换场次"></select>
-    </header>
-    <main>
-      <section class="player">
-        <img id="slide-image" alt="当前 slide" />
-        <div class="player-bar"><span id="slide-label">Slide</span><a id="open-pdf" target="_blank" rel="noreferrer">PDF ↗</a></div>
-      </section>
-      <aside class="panel">
-        <div class="tools">
-          <input id="search" type="search" placeholder="搜索字幕…" />
-          <button id="lang-toggle" class="icon-btn" title="切换字幕语言（中/原文）">中/EN</button>
-          <button id="prev-slide" class="icon-btn" title="上一条（←）">‹</button>
-          <button id="next-slide" class="icon-btn" title="下一条（→）">›</button>
+    <div class="hero">
+      <div class="wrap">
+        <p class="kicker">AGENTCON × MCPCON CHINA 2026 · 上海 · 9月6–7日</p>
+        <h1>Agent 要进生产环境了，<br />怎么管住它？</h1>
+        <p class="sub">两天的演讲，有人讲沙箱，有人讲网关，有人讲图数据库，有人讲端侧模型——但大家似乎都在设法回答同一个问题。不是"agent 能不能干活"，而是"敢不敢让它碰你们公司的数据库"。</p>
+        <a class="cta" href="player.html">进入回放器 →</a><span class="cta-note">13 场演讲 · 364 条字幕对照 · 305 页官方 slide · 中英字幕可切换</span>
+        <blockquote class="quote">
+          <p>大家都在想方设法地，在真实世界里更多地理解、运用、控制和管理 LLM agent。这让我想到一个互联网老梗——"人类尚未驯服 XXX 的时刻"。这两天的感受，就像是大家真实地身处这个时刻：各家方法或机智、或笨拙、或狡黠、或力大砖飞。若干年后回头看，一定会是个非常有意思的时刻 ：）</p>
+          <p>而作为 DevOps / SRE / 运维，我们的参与方式就像草稿里写的那样："狂欢的时候轮不到我们，治理的时候全是我们的活儿"（笑）。任重而道远——且行且看，且学习且创造。</p>
+          <p class="sig">—— 一个 SRE 的参会体会</p>
+        </blockquote>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <section class="body">
+        <h2>全天十四条演讲，收敛成四个词</h2>
+        <p class="lede">完整的分析写在公众号稿里，这里只留最核心的四组判断。</p>
+        <div class="grid4">
+          <div class="word">
+            <h3><span class="no">01</span>身份：agent 你是谁？</h3>
+            <p class="take">阿里云给每个 agent 发"电子身份"绑 RAM 权限；蚂蚁用 JWT 按 RFC 8693 逐跳嵌套委托链。</p>
+            <p>最喜欢的设计：<b>scope 故意不放进 JWT</b>——凭证只证明"你是谁"，权限动态查，才可撤销、可审计。想想那些躺在配置里三年没换的 API key。</p>
+          </div>
+          <div class="word">
+            <h3><span class="no">02</span>隔离：所有人都在做沙箱</h3>
+            <p class="take">腾讯 Cube Sandbox 快照路径 50ms；头部模型厂 RL 后训练每分钟 10–16 万次沙箱并发。</p>
+            <p>刘超更硬核：hypervisor 切两域，实时控制留给 Zephyr，agent 关在 Linux 域。一个防交互失控，一个防生产线被搞停——<b>硬度不同，逻辑同源</b>。</p>
+          </div>
+          <div class="word">
+            <h3><span class="no">03</span>安全：MCP 是管道，不是金库</h3>
+            <p class="take">2.4 万个泄露密钥；WhatsApp 和 GitHub 官方 MCP 两案：没人破解加密，破解的是权限。</p>
+            <p><b>可信服务器 ≠ 可信结果</b>。致命三要素 = 私有数据 + 不可信内容 + 对外通信；Anika 的四道防线（准入→上下文→动作→出站）就是在逐条拆三角。</p>
+          </div>
+          <div class="word">
+            <h3><span class="no">04</span>记忆：向量检索会"自信地答错"</h3>
+            <p class="take">同一份数字孪生，向量 RAG 答错，图 RAG 答对还画出推理链。</p>
+            <p>决策树：事实查询 → <b>参数化 MCP 直查</b>；多跳推理 → <b>建图</b>（配 CDC 保新鲜）；模糊找文档 → 才轮到向量 RAG。一套 RAG 打天下是偷懒。</p>
+          </div>
         </div>
-        <div class="hintline">← → 切换条目 ｜ 点击字幕定位 slide ｜ 数据：现场字幕 + 官方 slides</div>
-        <div id="results"></div>
-      </aside>
-    </main>
-    <script src="data.js?v=3"></script>
+      </section>
+
+      <section class="body">
+        <h2>现场</h2>
+        <p class="lede">陆家嘴、会场、和那些值得翻拍的 slide。</p>
+        <div class="gallery" id="gallery"></div>
+      </section>
+
+      <section class="body">
+        <h2>几个行业信号</h2>
+        <p class="lede"></p>
+        <div class="signals">
+          <div class="signal"><h3>智能路由的冷水</h3><p>多模型融合、多 agent 讨论，benchmark 无可见提升；路由只优化成本与延迟，"上限由模型决定，下限由推理成本决定"，开销必须 &lt;10%。</p></div>
+          <div class="signal"><h3>渗透率的想象</h3><p>约 1% 的企业软件包含 agent，2028 年预测升至 33%。是预测不是事实，但 agent 进生产已是全场反复出现的议题。</p></div>
+          <div class="signal"><h3>中国厂商的浓度</h3><p>腾讯、阿里、蚂蚁、字节、华为、阶跃、Intel 都带去了具体工程实践；Cube Sandbox、Ling、DeerFlow 提供了会后继续验证的入口。</p></div>
+        </div>
+      </section>
+
+      <section class="body">
+        <h2>回到现场：13 场回放入口</h2>
+        <p class="lede">点击任意场次进入回放器：左侧 slide，右侧字幕卡片，点击字幕定位到对应页；支持中英切换与全文搜索。</p>
+        <div id="halls"></div>
+      </section>
+
+      <section class="body">
+        <h2>5500 句字幕是怎么来的</h2>
+        <div class="how">
+          <p style="margin-top:0">两个分会场的实时字幕都走了 Wordly，网页端各开一个 join 链接持续拿英文转录；两个通道各挂一个后台脚本定时落盘，从开场录到散场，两天合计约 5500 句。会后按时间段切分 transcript，对照官方 slides 校正专有名词，再逐场提炼成纪要。</p>
+          <p style="margin-bottom:0">全程没有手动记一个字，人只负责在两个厅之间跑场。这套流程是让 Hermes（开源 AI agent 助手）代办的，纪要初稿也是它顺手写的。</p>
+        </div>
+      </section>
+
+      <footer>
+        所有 slide 版权归各位讲者所有，本站仅作个人学习笔记；字幕来自 Wordly 现场转写（专有名词已对照官方 deck 校正，勘误留在各条注释里）。
+        · <a href="https://github.com/lzpsqzr/agntcon-mcpcon-shanghai-2026-replay">GitHub</a>
+        · <a href="player.html">回放器</a>
+      </footer>
+    </div>
+
+    <script src="data.js?v=4"></script>
     <script>
-      const registry = window.talks, params = new URLSearchParams(location.search);
-      const slug = registry.some(t => t.slug === params.get('talk')) ? params.get('talk') : registry[0].slug;
-      let lang = 'zh'; // 'zh' 显示中文译文（无译文时回退原文），'src' 显示原声转写
-      const slideImage = document.querySelector('#slide-image'), results = document.querySelector('#results');
-      const langButton = document.querySelector('#lang-toggle');
-
-      // 场次下拉框（按注册表分组）
-      const select = document.querySelector('#talk-select');
-      const groups = new Map();
-      registry.forEach(t => {
-        if (!groups.has(t.group)) { const g = document.createElement('optgroup'); g.label = t.group; groups.set(t.group, g); select.append(g); }
-        const opt = document.createElement('option'); opt.value = t.slug; opt.textContent = t.label;
-        groups.get(t.group).append(opt);
+      // 照片墙
+      const captions = {
+        '01-lujiazui-street.jpg': '陆家嘴 · 会场外的上海',
+        '02-obot-architecture-slide.jpg': 'Obot 控制平面架构（现场翻拍）',
+        '03-lujiazui-trio.jpg': '陆家嘴三件套',
+        '04-escalator-lujiazui.jpg': '场馆扶梯',
+        '05-cubesandbox-snapshot-slide.jpg': '腾讯 Cube Sandbox：快照路径 50ms 启动',
+        '06-crabrag-vectors-slide.jpg': 'CrabRAG：向量 vs 图检索的同一份数字孪生',
+        '07-networking-crowd.jpg': '茶歇交流',
+        '08-conference-lunch.jpg': '会议午餐',
+        '09-graphrag-book-slide.jpg': 'Stephen Chin 刚写完的 O\'Reilly《GraphRAG》',
+        '10-oriental-pearl-night.jpg': '夜幕下的东方明珠',
+        '11-aaif-growth-slide.jpg': 'AAIF 社区增长',
+        '12-solutions-showcase.jpg': '解决方案展区',
+        '13-welcome-screen.jpg': '开场欢迎屏',
+        '14-aaif-members-slide.jpg': 'AAIF 会员版图',
+        '15-opensource-paradigm-slide.jpg': '开源范式收尾'
+      };
+      const gallery = document.querySelector('#gallery');
+      Object.entries(captions).forEach(([file, cap]) => {
+        const fig = document.createElement('figure');
+        fig.innerHTML = `<img src="field-photos/${file}" alt="${cap}" loading="lazy" /><figcaption>${cap}</figcaption>`;
+        gallery.append(fig);
       });
-      select.value = slug;
-      select.onchange = () => { location.search = `?talk=${select.value}`; };
 
-      const textOf = c => lang === 'zh' ? (c.transcript_zh || c.transcript) : (c.transcript_en || c.transcript);
-      langButton.onclick = () => { lang = lang === 'zh' ? 'src' : 'zh'; render(document.querySelector('#search').value, false); };
-
-      function go(cue, node) {
-        const page = String(cue.slide).padStart(2, '0');
-        slideImage.style.opacity = '0.35';
-        slideImage.src = `${window.talk.assets}/slide-${page}.jpg`;
-        slideImage.alt = `${window.talk.title}，第 ${cue.slide} 页：${cue.label}`;
-        document.querySelector('#slide-label').textContent = `Slide ${cue.slide}`;
-        document.querySelectorAll('.cue').forEach(x => x.classList.remove('active'));
-        node?.classList.add('active');
-      }
-      function render(term = '', autoFirst = true) {
-        const q = term.trim().toLocaleLowerCase(); results.innerHTML = '';
-        window.talk.cues.filter(c => !q || `${c.label} ${c.transcript} ${c.transcript_zh || ''} ${c.transcript_en || ''} ${c.note}`.toLocaleLowerCase().includes(q)).forEach((cue, i) => {
-          const item = document.createElement('article'); item.className = 'cue';
-          item.innerHTML = `<div class="cue-head"><span class="time">${cue.start}–${cue.end}</span><span class="slide-no">Slide ${cue.slide}</span></div><h2>${cue.label}</h2><p class="quote">${textOf(cue)}</p><p class="note">${cue.note}</p>`;
-          item.onclick = () => go(cue, item); results.append(item); if (!q && autoFirst && i === 0) go(cue, item);
-        });
-        if (!results.children.length) results.innerHTML = '<p class="note" style="padding:16px">没有匹配结果。</p>';
-      }
-      document.querySelector('#search').addEventListener('input', e => render(e.target.value));
-      const step = d => { // 跳到当前活跃 cue 的上一条/下一条
-        const items = [...results.querySelectorAll('.cue')];
-        const idx = items.indexOf(results.querySelector('.cue.active'));
-        (items[Math.min(items.length - 1, Math.max(0, idx + d))] || items[0])?.click();
-        results.querySelector('.cue.active')?.scrollIntoView({ block: 'nearest' });
-      };
-      document.querySelector('#prev-slide').onclick = () => step(-1);
-      document.querySelector('#next-slide').onclick = () => step(1);
-      addEventListener('keydown', e => { if (e.key === 'ArrowLeft') step(-1); if (e.key === 'ArrowRight') step(1); });
-      slideImage.addEventListener('load', () => { slideImage.style.opacity = '1'; });
-
-      // 动态加载场次数据后初始化
-      const s = document.createElement('script'); s.src = `${slug}-data.js?v=3`; s.onload = () => {
-        const { title, speaker, event, pdf, source } = window.talk;
-        document.title = `${title} · Slides × Transcript`;
-        document.querySelector('#title').textContent = title;
-        document.querySelector('#meta').textContent = `${speaker} · ${event} · 字幕来源：${source}`;
-        document.querySelector('#open-pdf').href = pdf;
-        render();
-      };
-      document.head.append(s);
+      // 回放入口（按注册表分组）
+      const halls = document.querySelector('#halls');
+      const byGroup = new Map();
+      window.talks.forEach(t => {
+        if (!byGroup.has(t.group)) {
+          const hall = document.createElement('div'); hall.className = 'hall';
+          hall.innerHTML = `<h3>${t.group}</h3><div class="talks"></div>`;
+          halls.append(hall); byGroup.set(t.group, hall.querySelector('.talks'));
+        }
+        const a = document.createElement('a'); a.className = 'talk'; a.href = `player.html?talk=${t.slug}`;
+        a.innerHTML = `<div class="t">${t.label} <span class="go">→</span></div><div class="s">${t.speaker} · ${t.pages} 页 slide</div>`;
+        byGroup.get(t.group).append(a);
+      });
     </script>
   </body>
 </html>
