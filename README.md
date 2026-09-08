@@ -1,5 +1,7 @@
 # Slides × Transcript
 
+线上地址：<https://lzpsqzr.github.io/agntcon-mcpcon-shanghai-2026-replay/>
+
 一个无构建步骤的静态原型：左半是预渲染的 slide 图片，右半是字幕卡片；点击卡片切换到对应 slide，可全文搜索、字幕中英切换、方向键翻条目。使用图片而非内嵌 PDF，是为了避免不同浏览器的 PDF 查看器忽略页码切换。
 
 启动方式：
@@ -33,9 +35,10 @@ python3 -m http.server 8000
 
 ## 数据结构
 
-- `data.js`：场次注册表（slug → 下拉框项）。加新场次 = 渲染 slide 图 + 新建 `<slug>-data.js` + 注册一行。
-- `<slug>-data.js`：每场一个 `window.talk`，`cues` 数组每条含 `start`/`end`（字幕时间戳）、`slide`（页码）、`label`（中文概括）、`transcript`（原声清理版）、`transcript_zh`（中文译文；A2A 场次原文是中文，用 `transcript_en` 反向）、`note`（编辑注释：跳页说明、Wordly 转写勘误等）。
+- `data.js`：场次注册表（slug → 下拉框项）。加新场次 = 渲染 slide 图 + 新建 `<slug>-data.js` + 复制 PDF 到 `pdfs/` + 注册一行。
+- `<slug>-data.js`：每场一个 `window.talk`，`cues` 数组每条含 `start`/`end`（字幕时间戳）、`slide`（页码）、`label`（中文概括）、`transcript`（原声清理版）、`transcript_zh`（中文译文）、`note`（编辑注释：跳页说明、Wordly 转写勘误等）。
 - `assets/<slug>/slide-NN.jpg`：`pdftoppm -jpeg -scale-to 1280` 预渲染。
+- `pdfs/<slug>.pdf`：该场官方 deck（发布到 GitHub Pages 用，仓库自包含）。
 
 ## 已知边界
 
